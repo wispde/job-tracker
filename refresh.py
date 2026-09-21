@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Fetch job data from Feishu Base and update jobs_data.js"""
-import json, urllib.request, urllib.error, re, os, sys
+import json, urllib.request, urllib.error, urllib.parse, re, os, sys
 
 TOKEN = os.environ.get("FEISHU_TOKEN", "")
 if not TOKEN:
@@ -19,7 +19,7 @@ def api_get(url):
     return resp["data"]
 
 # Fetch all records
-field_params = "&".join(f"field_id={f}" for f in FIELDS)
+field_params = "&".join(f"field_id={urllib.parse.quote(f)}" for f in FIELDS)
 all_records = []
 offset = 0
 field_names = None
