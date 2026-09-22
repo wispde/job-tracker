@@ -9,7 +9,7 @@ if not TOKEN:
 
 BASE_TOKEN = "ISNobVuXAagJBFssvszcYeqQnfb"
 TABLE_ID = "tblh7J5ONBOMBEK8"
-FIELDS = ["公司", "招聘岗位", "简历投递链接", "工作地点", "批次", "开始时间", "截止时间"]
+FIELDS = ["公司", "招聘岗位", "简历投递链接", "工作地点", "批次", "开始时间", "截止时间", "企业类型"]
 
 def api_get(url):
     req = urllib.request.Request(url, headers={"Authorization": f"Bearer {TOKEN}"})
@@ -78,10 +78,13 @@ for r in all_records:
     batch = r.get("批次", "") or ""
     if isinstance(batch, list): batch = ",".join(batch)
     elif not isinstance(batch, str): batch = str(batch)
+    ct = r.get("企业类型", "") or ""
+    if isinstance(ct, list): ct = ",".join(str(x) for x in ct if x)
+    elif not isinstance(ct, str): ct = str(ct)
     jobs.append([
         r["_id"], company, position, clean_link(link),
         clean_loc(r.get("工作地点", "")), batch,
-        fmt_date(r.get("开始时间", "")), fmt_deadline(r.get("截止时间", ""))
+        fmt_date(r.get("开始时间", "")), fmt_deadline(r.get("截止时间", "")), ct
     ])
 
 with open("jobs_data.js", "w", encoding="utf-8") as f:
